@@ -60,25 +60,10 @@ void CMyTriliza::VerifyFirstPlayer()
 	ZeroMemory(TrilizaMarks, sizeof(TrilizaMarks));
 	IsFormed = false;
 	NumberOfMovesPlayed = 0;
-	while (WhoPlaysFirst != 'y' && WhoPlaysFirst != 'n')
-	{
-		cout << "Now,do you want to play first ? (y|n)\n";
-		cin >> WhoPlaysFirst;
-	}
+
+	cout << "Player goes first.\n";
 	cout << "\n";
-	switch (WhoPlaysFirst)
-	{
-	case 'n':
-	{
-		DoIPlayFirst = true;
-		break;
-	}
-	case 'y':
-	{
-		DoIPlayFirst = false;
-		break;
-	}
-	}
+
 }
 
 ///////////////////////////////////////////////////////
@@ -154,19 +139,19 @@ void CMyTriliza::MakeHumanMove()
 }
 
 /////////////////////////////////////////////////////////////////////
-// 3*x2 + x1 - ( 3*O2 + O1 )                                       //
-// x2 = number of rows,columns or diagonals with 2 Xs and zero Os  // 
-// x1 = number of rows,columns or diagonals with 1 X and zero Os   //
-// O2 = number of rows,columns or diagonals with 2 Os and zero Xs  //
-// O1 = number of rows,columns or diagonals with 1 Os and zero Xs  //
+// 3*O2 + O1 - ( 3*X2 + X1 )                                       //
+// O2 = number of rows,columns or diagonals with 2 Xs and zero Os  // 
+// O1 = number of rows,columns or diagonals with 1 X and zero Os   //
+// X2 = number of rows,columns or diagonals with 2 Os and zero Xs  //
+// X1 = number of rows,columns or diagonals with 1 Os and zero Xs  //
 //                                                                 //
-// X represents cpu = 1                                            //
-// O represents human = 2                                          //
+// O represents cpu = 1                                            //
+// X represents human = 2                                          //
 //                                                                 //
 // Heuristic function for MinMax Algo is here                      //
 /////////////////////////////////////////////////////////////////////
 
-int CMyTriliza::EvaluatePosition()
+int CMyTriliza::EvaluatePosition() // *** player/cpu logic changed -Dan ***
 {
 	if (GetMarkValue(3, 0))
 		return 30;
@@ -176,10 +161,10 @@ int CMyTriliza::EvaluatePosition()
 		return -30;
 	else
 	{
-		int X2 = GetMarkValue(2, 0);  // determine x2 number
-		int X1 = GetMarkValue(1, 0);  // determine x1 number
-		int O2 = GetMarkValue(0, 2);  // determine O2 number
-		int O1 = GetMarkValue(0, 1);  // determine O1 number
+		int O2 = GetMarkValue(2, 0);  // determine x2 number
+		int O1 = GetMarkValue(1, 0);  // determine x1 number
+		int X2 = GetMarkValue(0, 2);  // determine O2 number
+		int X1 = GetMarkValue(0, 1);  // determine O1 number
 		return 3 * X2 + X1 - (3 * O2 + O1);
 	}
 }
@@ -191,7 +176,7 @@ int CMyTriliza::EvaluatePosition()
 // grid contains.                                       //
 //////////////////////////////////////////////////////////
 
-int CMyTriliza::GetMarkValue(int Xs, int Os)
+int CMyTriliza::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Dan ***
 {
 	int MarkValue = 0;
 	int NumXs = 0, NumOs = 0;
@@ -200,9 +185,9 @@ int CMyTriliza::GetMarkValue(int Xs, int Os)
 	for (int i = 0; i <= 8; i++)
 	{
 		if (TrilizaMarks[i] == 1) // If there's a CPU mark..
-			NumXs++;
-		else if (TrilizaMarks[i] == 2) // If there's a HUMAN mark..
 			NumOs++;
+		else if (TrilizaMarks[i] == 2) // If there's a HUMAN mark..
+			NumXs++;
 
 		if ((i + 1) % 3 == 0)  // If three row positions are over..
 		{
@@ -225,9 +210,9 @@ int CMyTriliza::GetMarkValue(int Xs, int Os)
 		for (int i = 0; i <= 8; i += 3)
 		{
 			if (TrilizaMarks[i] == 1) // If there's CPU mark..
-				NumXs++;
-			else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
 				NumOs++;
+			else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
+				NumXs++;
 		}
 		if (NumXs == Xs && NumOs == Os)
 		{
@@ -246,9 +231,9 @@ int CMyTriliza::GetMarkValue(int Xs, int Os)
 	for (int i = 0; i <= 8; i += 4)
 	{
 		if (TrilizaMarks[i] == 1) // If there's CPU mark..
-			NumXs++;
-		else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
 			NumOs++;
+		else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
+			NumXs++;
 	}
 	if (NumXs == Xs && NumOs == Os)
 	{
@@ -263,9 +248,9 @@ int CMyTriliza::GetMarkValue(int Xs, int Os)
 	for (i = 2; i <= 6; i += 2)
 	{
 		if (TrilizaMarks[i] == 1) // If there's CPU mark..
-			NumXs++;
-		else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
 			NumOs++;
+		else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
+			NumXs++;
 	}
 	if (NumXs == Xs && NumOs == Os)
 	{
@@ -321,7 +306,7 @@ bool CMyTriliza::CheckForPitFalls()
 // This function draws the Triliza grid after each move  //
 ///////////////////////////////////////////////////////////
 
-void CMyTriliza::DrawTriliza()
+void CMyTriliza::DrawTriliza() // *** player/cpu logic changed -Dan ***
 {
 
 	cout << "\nThis is what the Triliza grid looks like after the last move : \n\n";
@@ -331,18 +316,18 @@ void CMyTriliza::DrawTriliza()
 		if ((i + 1) % 3 != 0)
 		{
 			if (TrilizaMarks[i] == 1)
-				cout << " X|";
-			else if (TrilizaMarks[i] == 2)
 				cout << " O|";
+			else if (TrilizaMarks[i] == 2)
+				cout << " X|";
 			else if (TrilizaMarks[i] == 0)
 				cout << "  |";
 		}
 		else
 		{
 			if (TrilizaMarks[i] == 1)
-				cout << " X\n";
-			else if (TrilizaMarks[i] == 2)
 				cout << " O\n";
+			else if (TrilizaMarks[i] == 2)
+				cout << " X\n";
 			else if (TrilizaMarks[i] == 0)
 				cout << "  \n";
 			if ((i + 1) % 9 != 0)
@@ -351,25 +336,8 @@ void CMyTriliza::DrawTriliza()
 	}
 }
 
-void CMyTriliza::TrilizaLoop()
+void CMyTriliza::TrilizaLoop() // removed option to allow the player to choose who goes first
 {
-	if (DoIPlayFirst)
-	{
-		while (NumberOfMovesPlayed <= 8)
-		{
-			MakeCPUMove();  // CPU plays first here..
-			if (IsFormed)
-				break;
-			if (NumberOfMovesPlayed != 9)
-				MakeHumanMove();
-			if (IsFormed)
-				break;
-		}
-		if (!IsFormed)
-			cout << "\nNobody wins..That's OK,i'll win next time..\n";
-	}
-	else
-	{
 		while (NumberOfMovesPlayed <= 8)
 		{
 			MakeHumanMove();  // Human plays first here..
@@ -382,7 +350,6 @@ void CMyTriliza::TrilizaLoop()
 		}
 		if (!IsFormed)
 			cout << "\nNobody wins..How can i win if i don't play first ?\n";
-	}
 }
 
 bool CMyTriliza::PlayAgain()
@@ -407,7 +374,7 @@ bool CMyTriliza::PlayAgain()
 
 CMyTriliza *Triliza;
 
-int main(int argc, char* argv[])
+int main()
 {
 	cout << "This is a TRILIZA(tic-tac-toe) game created by human_thought.In order to play\nthis game you first decide ";
 	cout << "whether YOU or the COMPUTER should play first.\n\n";
