@@ -9,27 +9,27 @@
 using namespace std;
 
 
-class CMyTriliza
+class CMyTicTacToe
 {
 public:
 	bool PlayAgain();
-	void TrilizaLoop();
-	void DrawTriliza();
+	void TicTacToeLoop();
+	void DrawTicTacToe();
 	bool CheckForPitFalls();
-	bool IsATrilizaFormed();
+	bool IsATicTacToeFormed();
 	int GetMarkValue(int Xs, int Os);
 	int EvaluatePosition();
 	int NumberOfMovesPlayed;
-	void MakeHumanMove();
-	void MakeCPUMove();
+	void humanMove();
+	void computerMove();
 	void VerifyFirstPlayer();
-	CMyTriliza();
-	virtual ~CMyTriliza();
+	CMyTicTacToe();
+	virtual ~CMyTicTacToe();
 	bool IsFormed;
 	bool DoIPlayFirst;
 
 private:
-	int TrilizaMarks[9];   // 1 for human,2 for cpu
+	int TicTacToeMarks[9];   // 1 for human,2 for cpu
 	char WhoPlaysFirst;
 
 
@@ -41,12 +41,12 @@ private:
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CMyTriliza::CMyTriliza()
+CMyTicTacToe::CMyTicTacToe()
 {
 
 }
 
-CMyTriliza::~CMyTriliza()
+CMyTicTacToe::~CMyTicTacToe()
 {
 
 }
@@ -55,9 +55,9 @@ CMyTriliza::~CMyTriliza()
 // Initialise some data and check who plays first //
 ////////////////////////////////////////////////////
 
-void CMyTriliza::VerifyFirstPlayer()
+void CMyTicTacToe::VerifyFirstPlayer()
 {
-	ZeroMemory(TrilizaMarks, sizeof(TrilizaMarks));
+	ZeroMemory(TicTacToeMarks, sizeof(TicTacToeMarks));
 	IsFormed = false;
 	NumberOfMovesPlayed = 0;
 
@@ -66,32 +66,32 @@ void CMyTriliza::VerifyFirstPlayer()
 
 }
 
-///////////////////////////////////////////////////////
-// CPU has to make a move.Perform MinMax Algorithm.  //
-// Evaluate using EvaluatePosition() as a heuristic  // 
-// function.Get the best position and output it.     //
-// Then draw the Triliza on screen.                  //
-///////////////////////////////////////////////////////
 
-void CMyTriliza::MakeCPUMove()
+// CPU has to make a move.Perform MinMax Algorithm.  
+// Evaluate using EvaluatePosition() as a heuristic  
+// function.Get the best position and output it.     
+// Then draw the TicTacToe on screen.                 
+
+
+void CMyTicTacToe::computerMove()
 {
-	if (IsATrilizaFormed())
+	if (IsATicTacToeFormed())
 	{
 		IsFormed = true;
-		cout << "\nA TRILIZA was formed !!! You have somehow beaten the machine !!!\n Did you cheat :) ?\n";
+		cout << "\nA TicTacToe was formed !!! You have somehow beaten the machine !!!\n Did you cheat :) ?\n";
 	}
 	else
 	{
-		int TrilizaMarksBackUp[9];
-		memcpy(TrilizaMarksBackUp, TrilizaMarks, sizeof(TrilizaMarks));  // Create Local BackUp With Current Positions
+		int TicTacToeMarksBackUp[9];
+		memcpy(TicTacToeMarksBackUp, TicTacToeMarks, sizeof(TicTacToeMarks));  // Create Local BackUp With Current Positions
 		int best_value = -30;
 		int best_position = 0;
 
 		for (int i = 0; i <= 8; i++)
 		{
-			if (TrilizaMarks[i] != 1 && TrilizaMarks[i] != 2)  // If there's not a mark there..
+			if (TicTacToeMarks[i] != 1 && TicTacToeMarks[i] != 2)  // If there's not a mark there..
 			{
-				TrilizaMarks[i] = 1;
+				TicTacToeMarks[i] = 1;
 				int returned_value = EvaluatePosition();
 				if (returned_value >= best_value)
 				{
@@ -99,29 +99,29 @@ void CMyTriliza::MakeCPUMove()
 					best_position = i;
 				}
 			}
-			memcpy(TrilizaMarks, TrilizaMarksBackUp, sizeof(TrilizaMarks));  // Recover Previous Values
+			memcpy(TicTacToeMarks, TicTacToeMarksBackUp, sizeof(TicTacToeMarks));  // Recover Previous Values
 		}
 
 		cout << "\n\nDuring my move I placed a mark in square number: ";
 		cout << best_position + 1;
 		cout << "\n";
-		TrilizaMarks[best_position] = 1;
+		TicTacToeMarks[best_position] = 1;
 		NumberOfMovesPlayed++;
 	}
-	DrawTriliza();
+	DrawTicTacToe();
 }
 
-//////////////////////////////////////
-// Human has to make a move too.    //
-// Then draw the Triliza on screen. //
-//////////////////////////////////////
+//
+// Human has to make a move too.    
+// Then draw the TicTacToe on screen. 
+//
 
-void CMyTriliza::MakeHumanMove()
+void CMyTicTacToe::humanMove()
 {
-	if (IsATrilizaFormed())
+	if (IsATicTacToeFormed())
 	{
 		IsFormed = true;
-		cout << "\nA TRILIZA was formed !!! As usual,i won again.. :)\n";
+		cout << "\nA Tic-Tac-Toe was formed !!! As usual,i won again.. :)\n";
 	}
 	else
 	{
@@ -132,26 +132,24 @@ void CMyTriliza::MakeHumanMove()
 			cin >> move;
 		}
 
-		TrilizaMarks[move - 1] = 2;
+		TicTacToeMarks[move - 1] = 2;
 		NumberOfMovesPlayed++;
 	}
-	DrawTriliza();
+	DrawTicTacToe();
 }
 
-/////////////////////////////////////////////////////////////////////
-// 3*O2 + O1 - ( 3*X2 + X1 )                                       //
-// O2 = number of rows,columns or diagonals with 2 Xs and zero Os  // 
-// O1 = number of rows,columns or diagonals with 1 X and zero Os   //
-// X2 = number of rows,columns or diagonals with 2 Os and zero Xs  //
-// X1 = number of rows,columns or diagonals with 1 Os and zero Xs  //
-//                                                                 //
-// O represents cpu = 1                                            //
-// X represents human = 2                                          //
-//                                                                 //
-// Heuristic function for MinMax Algo is here                      //
-/////////////////////////////////////////////////////////////////////
 
-int CMyTriliza::EvaluatePosition() // *** player/cpu logic changed -Dan ***
+// 3*O2 + O1 - ( 3*X2 + X1 )                                       
+// O2 = number of rows,columns or diagonals with 2 Xs and zero Os  
+// O1 = number of rows,columns or diagonals with 1 X and zero Os   
+// X2 = number of rows,columns or diagonals with 2 Os and zero Xs  
+// X1 = number of rows,columns or diagonals with 1 Os and zero Xs  
+//                                                                 
+// O represents cpu = 1                                            
+// X represents human = 2                                      
+
+
+int CMyTicTacToe::EvaluatePosition() // *** player/cpu logic changed -Dan ***
 {
 	if (GetMarkValue(3, 0))
 		return 30;
@@ -169,14 +167,14 @@ int CMyTriliza::EvaluatePosition() // *** player/cpu logic changed -Dan ***
 	}
 }
 
-//////////////////////////////////////////////////////////
-// You pass the number of Xs and Os in this function.   //
-// Then it returns how many rows,columns and diagonals  //
-// which have the same number of Xs and Os the Triliza  // 
-// grid contains.                                       //
-//////////////////////////////////////////////////////////
 
-int CMyTriliza::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Dan ***
+// You pass the number of Xs and Os in this function.   
+// Then it returns how many rows,columns and diagonals
+// which have the same number of Xs and Os the TicTacToe 
+// grid contains.                                       
+
+
+int CMyTicTacToe::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Dan ***
 {
 	int MarkValue = 0;
 	int NumXs = 0, NumOs = 0;
@@ -184,9 +182,9 @@ int CMyTriliza::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Da
 	// Check Rows
 	for (int i = 0; i <= 8; i++)
 	{
-		if (TrilizaMarks[i] == 1) // If there's a CPU mark..
+		if (TicTacToeMarks[i] == 1) // If there's a CPU mark..
 			NumOs++;
-		else if (TrilizaMarks[i] == 2) // If there's a HUMAN mark..
+		else if (TicTacToeMarks[i] == 2) // If there's a HUMAN mark..
 			NumXs++;
 
 		if ((i + 1) % 3 == 0)  // If three row positions are over..
@@ -209,9 +207,9 @@ int CMyTriliza::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Da
 	{
 		for (int i = 0; i <= 8; i += 3)
 		{
-			if (TrilizaMarks[i] == 1) // If there's CPU mark..
+			if (TicTacToeMarks[i] == 1) // If there's CPU mark..
 				NumOs++;
-			else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
+			else if (TicTacToeMarks[i] == 2) // If there's HUMAN mark..
 				NumXs++;
 		}
 		if (NumXs == Xs && NumOs == Os)
@@ -230,9 +228,9 @@ int CMyTriliza::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Da
 	//Check Diagonal 1
 	for (int i = 0; i <= 8; i += 4)
 	{
-		if (TrilizaMarks[i] == 1) // If there's CPU mark..
+		if (TicTacToeMarks[i] == 1) // If there's CPU mark..
 			NumOs++;
-		else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
+		else if (TicTacToeMarks[i] == 2) // If there's HUMAN mark..
 			NumXs++;
 	}
 	if (NumXs == Xs && NumOs == Os)
@@ -247,9 +245,9 @@ int CMyTriliza::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Da
 	//Check Diagonal 2
 	for (i = 2; i <= 6; i += 2)
 	{
-		if (TrilizaMarks[i] == 1) // If there's CPU mark..
+		if (TicTacToeMarks[i] == 1) // If there's CPU mark..
 			NumOs++;
-		else if (TrilizaMarks[i] == 2) // If there's HUMAN mark..
+		else if (TicTacToeMarks[i] == 2) // If there's HUMAN mark..
 			NumXs++;
 	}
 	if (NumXs == Xs && NumOs == Os)
@@ -262,12 +260,10 @@ int CMyTriliza::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Da
 	return MarkValue;
 }
 
-////////////////////////////////////
-// Check if a Triliza is formed   //
-// Check for 3 Xs or Os for that  //
-////////////////////////////////////
+// Check if a TicTacToe is formed   
+// Check for 3 Xs or Os for that  
 
-bool CMyTriliza::IsATrilizaFormed()
+bool CMyTicTacToe::IsATicTacToeFormed()
 {
 	if (GetMarkValue(3, 0))
 		return true;
@@ -277,58 +273,54 @@ bool CMyTriliza::IsATrilizaFormed()
 		return false;
 }
 
-////////////////////////////////////////////////////
-// Check for some pitfalls of Triliza             //
-// Like Double Trilizas.Find ways to bypass them  //
-////////////////////////////////////////////////////
+// Check for some pitfalls of TicTacToe             
+// Like Double TicTacToes.Find ways to bypass them  
 
-bool CMyTriliza::CheckForPitFalls()
+bool CMyTicTacToe::CheckForPitFalls()
 {
-	if (TrilizaMarks[4] == 1 && ((TrilizaMarks[0] == 2 && TrilizaMarks[8] == 2) || (TrilizaMarks[2] == 2 && TrilizaMarks[6] == 2)) && (TrilizaMarks[1] == 0 && TrilizaMarks[3] == 0 && TrilizaMarks[5] == 0 && TrilizaMarks[7] == 0))
+	if (TicTacToeMarks[4] == 1 && ((TicTacToeMarks[0] == 2 && TicTacToeMarks[8] == 2) || (TicTacToeMarks[2] == 2 && TicTacToeMarks[6] == 2)) && (TicTacToeMarks[1] == 0 && TicTacToeMarks[3] == 0 && TicTacToeMarks[5] == 0 && TicTacToeMarks[7] == 0))
 		return true;
-	else if (TrilizaMarks[4] == 1 && TrilizaMarks[8] == 1 && TrilizaMarks[2] == 2 && TrilizaMarks[3] == 2)
+	else if (TicTacToeMarks[4] == 1 && TicTacToeMarks[8] == 1 && TicTacToeMarks[2] == 2 && TicTacToeMarks[3] == 2)
 		return true;
-	else if (TrilizaMarks[4] == 1 && TrilizaMarks[6] == 1 && TrilizaMarks[0] == 2 && TrilizaMarks[5] == 2)
+	else if (TicTacToeMarks[4] == 1 && TicTacToeMarks[6] == 1 && TicTacToeMarks[0] == 2 && TicTacToeMarks[5] == 2)
 		return true;
-	else if (TrilizaMarks[4] == 1 && TrilizaMarks[6] == 1 && TrilizaMarks[1] == 2 && TrilizaMarks[8] == 2)
+	else if (TicTacToeMarks[4] == 1 && TicTacToeMarks[6] == 1 && TicTacToeMarks[1] == 2 && TicTacToeMarks[8] == 2)
 		return true;
-	else if (TrilizaMarks[4] == 1 && TrilizaMarks[8] == 1 && TrilizaMarks[1] == 2 && TrilizaMarks[6] == 2)
+	else if (TicTacToeMarks[4] == 1 && TicTacToeMarks[8] == 1 && TicTacToeMarks[1] == 2 && TicTacToeMarks[6] == 2)
 		return true;
-	else if (TrilizaMarks[4] == 1 && TrilizaMarks[8] == 1 && TrilizaMarks[1] == 2 && TrilizaMarks[3] == 2)
+	else if (TicTacToeMarks[4] == 1 && TicTacToeMarks[8] == 1 && TicTacToeMarks[1] == 2 && TicTacToeMarks[3] == 2)
 		return true;
-	else if (TrilizaMarks[4] == 1 && TrilizaMarks[0] == 1 && TrilizaMarks[6] == 1 && TrilizaMarks[7] == 1 && TrilizaMarks[1] == 2 && TrilizaMarks[2] == 2 && TrilizaMarks[3] == 2 && TrilizaMarks[8] == 2)
+	else if (TicTacToeMarks[4] == 1 && TicTacToeMarks[0] == 1 && TicTacToeMarks[6] == 1 && TicTacToeMarks[7] == 1 && TicTacToeMarks[1] == 2 && TicTacToeMarks[2] == 2 && TicTacToeMarks[3] == 2 && TicTacToeMarks[8] == 2)
 		return true;
 	else
 		return false;
 }
 
-///////////////////////////////////////////////////////////
-// This function draws the Triliza grid after each move  //
-///////////////////////////////////////////////////////////
+// This function draws the TicTacToe grid after each move  
 
-void CMyTriliza::DrawTriliza() // *** player/cpu logic changed -Dan ***
+void CMyTicTacToe::DrawTicTacToe() // *** player/cpu logic changed -Dan ***
 {
 
-	cout << "\nThis is what the Triliza grid looks like after the last move : \n\n";
+	cout << "\nThis is what the TicTacToe grid looks like after the last move : \n\n";
 
 	for (int i = 0; i <= 8; i++)
 	{
 		if ((i + 1) % 3 != 0)
 		{
-			if (TrilizaMarks[i] == 1)
+			if (TicTacToeMarks[i] == 1)
 				cout << " O|";
-			else if (TrilizaMarks[i] == 2)
+			else if (TicTacToeMarks[i] == 2)
 				cout << " X|";
-			else if (TrilizaMarks[i] == 0)
+			else if (TicTacToeMarks[i] == 0)
 				cout << "  |";
 		}
 		else
 		{
-			if (TrilizaMarks[i] == 1)
+			if (TicTacToeMarks[i] == 1)
 				cout << " O\n";
-			else if (TrilizaMarks[i] == 2)
+			else if (TicTacToeMarks[i] == 2)
 				cout << " X\n";
-			else if (TrilizaMarks[i] == 0)
+			else if (TicTacToeMarks[i] == 0)
 				cout << "  \n";
 			if ((i + 1) % 9 != 0)
 				cout << "-------- \n";
@@ -336,15 +328,15 @@ void CMyTriliza::DrawTriliza() // *** player/cpu logic changed -Dan ***
 	}
 }
 
-void CMyTriliza::TrilizaLoop() // removed option to allow the player to choose who goes first
+void CMyTicTacToe::TicTacToeLoop() // removed option to allow the player to choose who goes first
 {
 		while (NumberOfMovesPlayed <= 8)
 		{
-			MakeHumanMove();  // Human plays first here..
+			humanMove();  // Human plays first here..
 			if (IsFormed)
 				break;
 			if (NumberOfMovesPlayed != 9)
-				MakeCPUMove();
+				computerMove();
 			if (IsFormed)
 				break;
 		}
@@ -352,7 +344,7 @@ void CMyTriliza::TrilizaLoop() // removed option to allow the player to choose w
 			cout << "\nNobody wins..How can i win if i don't play first ?\n";
 }
 
-bool CMyTriliza::PlayAgain()
+bool CMyTicTacToe::PlayAgain()
 {
 	char PlayAgain = 0;
 	while (PlayAgain != 'y' && PlayAgain != 'n')
@@ -372,14 +364,14 @@ bool CMyTriliza::PlayAgain()
 }
 
 
-CMyTriliza *Triliza;
+CMyTicTacToe *TicTacToe;
 
 int main()
 {
-	cout << "This is a TRILIZA(tic-tac-toe) game created by human_thought.In order to play\nthis game you first decide ";
+	cout << "This is a Tic-Tac-Toe game created by human_thought.In order to play\nthis game you first decide ";
 	cout << "whether YOU or the COMPUTER should play first.\n\n";
 	cout << "In order to choose a position on which you want to place your mark,think of the ";
-	cout << "TRILIZA grid as having numbered squares.A TRILIZA grid contains 9 squares,so\n";
+	cout << "Tic-Tac-Toe grid as having numbered squares.A TicTacToe grid contains 9 squares,so\n";
 	cout << "just pick a number from 1-9 to identify where you want your mark put.";
 	cout << "Keep in\nmind that number 1 is the upper left corner,while 9 is the lower right corner..\n";
 	cout << "You can verify the positions watching the diagram below..\n";
@@ -397,11 +389,11 @@ int main()
 
 	while (1)
 	{
-		Triliza = new CMyTriliza();
-		Triliza->VerifyFirstPlayer();
-		Triliza->TrilizaLoop();
+		TicTacToe = new CMyTicTacToe();
+		TicTacToe->VerifyFirstPlayer();
+		TicTacToe->TicTacToeLoop();
 
-		if (!Triliza->PlayAgain())
+		if (!TicTacToe->PlayAgain())
 			break;
 	}
 
