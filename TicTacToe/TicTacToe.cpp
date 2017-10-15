@@ -8,10 +8,8 @@
 
 using namespace std;
 
-
-class CMyTicTacToe
+struct SMyTicTacToe
 {
-public:
 	bool PlayAgain();
 	void TicTacToeLoop();
 	void DrawTicTacToe();
@@ -23,39 +21,19 @@ public:
 	void humanMove();
 	void computerMove();
 	void VerifyFirstPlayer();
-	CMyTicTacToe();
-	virtual ~CMyTicTacToe();
 	bool IsFormed;
 	bool DoIPlayFirst;
-
-private:
 	int TicTacToeMarks[9];   // 1 for human,2 for cpu
 	char WhoPlaysFirst;
-
-
 };
 
 
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-CMyTicTacToe::CMyTicTacToe()
-{
-
-}
-
-CMyTicTacToe::~CMyTicTacToe()
-{
-
-}
 
 ////////////////////////////////////////////////////
 // Initialise some data and check who plays first //
 ////////////////////////////////////////////////////
 
-void CMyTicTacToe::VerifyFirstPlayer()
+void SMyTicTacToe::VerifyFirstPlayer()
 {
 	ZeroMemory(TicTacToeMarks, sizeof(TicTacToeMarks));
 	IsFormed = false;
@@ -73,7 +51,7 @@ void CMyTicTacToe::VerifyFirstPlayer()
 // Then draw the TicTacToe on screen.                 
 
 
-void CMyTicTacToe::computerMove()
+void SMyTicTacToe::computerMove()
 {
 	if (IsATicTacToeFormed())
 	{
@@ -116,7 +94,7 @@ void CMyTicTacToe::computerMove()
 // Then draw the TicTacToe on screen. 
 //
 
-void CMyTicTacToe::humanMove()
+void SMyTicTacToe::humanMove()
 {
 	if (IsATicTacToeFormed())
 	{
@@ -149,7 +127,7 @@ void CMyTicTacToe::humanMove()
 // X represents human = 2                                      
 
 
-int CMyTicTacToe::EvaluatePosition() // *** player/cpu logic changed -Dan ***
+int SMyTicTacToe::EvaluatePosition() // *** player/cpu logic changed -Dan ***
 {
 	if (GetMarkValue(3, 0))
 		return 30;
@@ -174,7 +152,7 @@ int CMyTicTacToe::EvaluatePosition() // *** player/cpu logic changed -Dan ***
 // grid contains.                                       
 
 
-int CMyTicTacToe::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Dan ***
+int SMyTicTacToe::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -Dan ***
 {
 	int MarkValue = 0;
 	int NumXs = 0, NumOs = 0;
@@ -263,7 +241,7 @@ int CMyTicTacToe::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -
 // Check if a TicTacToe is formed   
 // Check for 3 Xs or Os for that  
 
-bool CMyTicTacToe::IsATicTacToeFormed()
+bool SMyTicTacToe::IsATicTacToeFormed()
 {
 	if (GetMarkValue(3, 0))
 		return true;
@@ -276,7 +254,7 @@ bool CMyTicTacToe::IsATicTacToeFormed()
 // Check for some pitfalls of TicTacToe             
 // Like Double TicTacToes.Find ways to bypass them  
 
-bool CMyTicTacToe::CheckForPitFalls()
+bool SMyTicTacToe::CheckForPitFalls()
 {
 	if (TicTacToeMarks[4] == 1 && ((TicTacToeMarks[0] == 2 && TicTacToeMarks[8] == 2) || (TicTacToeMarks[2] == 2 && TicTacToeMarks[6] == 2)) && (TicTacToeMarks[1] == 0 && TicTacToeMarks[3] == 0 && TicTacToeMarks[5] == 0 && TicTacToeMarks[7] == 0))
 		return true;
@@ -298,7 +276,7 @@ bool CMyTicTacToe::CheckForPitFalls()
 
 // This function draws the TicTacToe grid after each move  
 
-void CMyTicTacToe::DrawTicTacToe() // *** player/cpu logic changed -Dan ***
+void SMyTicTacToe::DrawTicTacToe() // *** player/cpu logic changed -Dan ***
 {
 
 	cout << "\nThis is what the TicTacToe grid looks like after the last move : \n\n";
@@ -328,23 +306,23 @@ void CMyTicTacToe::DrawTicTacToe() // *** player/cpu logic changed -Dan ***
 	}
 }
 
-void CMyTicTacToe::TicTacToeLoop() // removed option to allow the player to choose who goes first
+void SMyTicTacToe::TicTacToeLoop() // removed option to allow the player to choose who goes first
 {
-		while (NumberOfMovesPlayed <= 8)
-		{
-			humanMove();  // Human plays first here..
-			if (IsFormed)
-				break;
-			if (NumberOfMovesPlayed != 9)
-				computerMove();
-			if (IsFormed)
-				break;
-		}
-		if (!IsFormed)
-			cout << "\nNobody wins..How can i win if i don't play first ?\n";
+	while (NumberOfMovesPlayed <= 8)
+	{
+		humanMove();  // Human plays first here..
+		if (IsFormed)
+			break;
+		if (NumberOfMovesPlayed != 9)
+			computerMove();
+		if (IsFormed)
+			break;
+	}
+	if (!IsFormed)
+		cout << "\nNobody wins..How can i win if i don't play first ?\n";
 }
 
-bool CMyTicTacToe::PlayAgain()
+bool SMyTicTacToe::PlayAgain()
 {
 	char PlayAgain = 0;
 	while (PlayAgain != 'y' && PlayAgain != 'n')
@@ -364,7 +342,7 @@ bool CMyTicTacToe::PlayAgain()
 }
 
 
-CMyTicTacToe *TicTacToe;
+SMyTicTacToe *TicTacToe = new SMyTicTacToe;
 
 int main()
 {
@@ -389,7 +367,7 @@ int main()
 
 	while (1)
 	{
-		TicTacToe = new CMyTicTacToe();
+		TicTacToe = new SMyTicTacToe();
 		TicTacToe->VerifyFirstPlayer();
 		TicTacToe->TicTacToeLoop();
 
