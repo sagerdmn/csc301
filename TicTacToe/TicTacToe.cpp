@@ -22,6 +22,8 @@
 
 using namespace std;
 
+enum marks { E = 0, X = 2, O = 1 };
+
 struct SMyTicTacToe
 {
 	bool PlayAgain(); // ask user if they want to play again
@@ -31,7 +33,7 @@ struct SMyTicTacToe
 	void DrawTicTacToe(); // lays out the T3 board each time a move is made
 	bool CheckForPitFalls();  // looks for any wonkiness - like 2 TicTacToes
 	bool IsATicTacToeFormed(); // checks for winners
-	int GetMarkValue(int Xs, int Os); // human marker = X which is 1; cpu marker = O which is 2
+	int GetMarkValue(int Xs, int Os); // human marker = X which is 2; cpu marker = O which is 1
 	int EvaluatePosition(); // this is the AI's strategy; it uses a MinMax algorithm https://en.wikipedia.org/wiki/Minimax_theorem 
 							// to test each move
 							/* Never go up against a computer when WINNING is on the line!!
@@ -62,7 +64,7 @@ void SMyTicTacToe::humanMove()
 	{
 		IsFormed = true;
 		// if there is, talk some smack
-		cout << "\nMuahahaha! I win! You lose!\n";
+		cout << "\n Muahahaha! I win! You lose!\n";
 	}
 	else
 	{
@@ -71,7 +73,7 @@ void SMyTicTacToe::humanMove()
 		/* move > than 9 or < 1?? We're looking for a # between 1 & 9 for the move?*/
 		while (move>9 || move<1)
 		{
-			cout << "\nPlease enter a number from 1-9 for your move: ";
+			cout << "\n Please enter a number from 1-9 for your move: ";
 			cin >> move;
 		}
 
@@ -81,10 +83,10 @@ void SMyTicTacToe::humanMove()
 		// we're looking for the ELEMENT in the array where we can place our X
 		// example: human enters 8; TicTacToeMarks[8-1] = 
 		// ELEMENT 7 so the program puts an X in the 7 slot
-		TicTacToeMarks[move - 1] = 2;
+		TicTacToeMarks[move - 1] = X;
 		NumberOfMovesPlayed++;
 	}
-	DrawTicTacToe();
+	//DrawTicTacToe();
 }
 
 // CPU uses minmax algorithm to EvaluatePosition()
@@ -96,7 +98,7 @@ void SMyTicTacToe::computerMove()
 	if (IsATicTacToeFormed())
 	{
 		IsFormed = true;
-		cout << "\nInconceivable! You cheated! I demand a recount! \n";
+		cout << "\n Inconceivable! You cheated! I demand a recount! \n";
 	}
 	else
 	{
@@ -110,9 +112,9 @@ void SMyTicTacToe::computerMove()
 		/* THIS WILL NEED TO CHANGE WHEN WE GET THE DYNAMIC ARRAY WORKING */
 		for (int i = 0; i <= 8; i++)
 		{
-			if (TicTacToeMarks[i] != 1 && TicTacToeMarks[i] != 2)  // If there's not already a mark there
+			if (TicTacToeMarks[i] != O && TicTacToeMarks[i] != X)  // If there's not already a mark there
 			{
-				TicTacToeMarks[i] = 1;
+				TicTacToeMarks[i] = O;
 				// run the returned value through the EvaluatePosition() function
 				int returnedValue = EvaluatePosition();
 				// the evaluate it against the variable we set up earlier as -30
@@ -128,13 +130,13 @@ void SMyTicTacToe::computerMove()
 			memcpy(TicTacToeMarks, TicTacToeMarksBackUp, sizeof(TicTacToeMarks));
 		}
 
-		cout << "\n\nAfter some genius-level calculations. I put my mark in ";
+		cout << "\n\n After some genius-level calculations. I put my mark in ";
 		cout << bestPosition + 1; //this returns the actual letter# combo as output
 		cout << "! Top that!\n";
-		TicTacToeMarks[bestPosition] = 1; // this sticks the O into the element's spot
+		TicTacToeMarks[bestPosition] = O; // this sticks the O into the element's spot
 		NumberOfMovesPlayed++; // and then ups the # of moves so we don't go over
 	}
-	DrawTicTacToe(); // and draws the board again
+	//DrawTicTacToe(); // and draws the board again
 }
 
 /* Karyn note: I'm still not fully getting what's going on between GetMarkValue and EvaluatePosition */
@@ -180,10 +182,10 @@ int SMyTicTacToe::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -
 		// this will loop through every element looking for a
 		// CPU mark (1) or a Human mark (2)
 		// so for [0] (which is box 1), there IS a human mark so
-		if (TicTacToeMarks[i] == 1)
+		if (TicTacToeMarks[i] == O)
 			NumOs++;
 		// we up the # of Xs by 1 --> NumXs = 1
-		else if (TicTacToeMarks[i] == 2)
+		else if (TicTacToeMarks[i] == X)
 			NumXs++;
 
 		if ((i + 1) % 3 == 0)  // If three row positions are over..
@@ -208,9 +210,9 @@ int SMyTicTacToe::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -
 	{
 		for (int i = 0; i <= 8; i += 3)
 		{
-			if (TicTacToeMarks[i] == 1) // If there's CPU mark..
+			if (TicTacToeMarks[i] == O) // If there's CPU mark..
 				NumOs++;
-			else if (TicTacToeMarks[i] == 2) // If there's HUMAN mark..
+			else if (TicTacToeMarks[i] == X) // If there's HUMAN mark..
 				NumXs++;
 		}
 		if (NumXs == Xs && NumOs == Os)
@@ -229,9 +231,9 @@ int SMyTicTacToe::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -
 	//Check Diagonal 1
 	for (int i = 0; i <= 8; i += 4)
 	{
-		if (TicTacToeMarks[i] == 1) // If there's CPU mark..
+		if (TicTacToeMarks[i] == O) // If there's CPU mark..
 			NumOs++;
-		else if (TicTacToeMarks[i] == 2) // If there's HUMAN mark..
+		else if (TicTacToeMarks[i] == X) // If there's HUMAN mark..
 			NumXs++;
 	}
 	if (NumXs == Xs && NumOs == Os)
@@ -246,9 +248,9 @@ int SMyTicTacToe::GetMarkValue(int Xs, int Os) // *** player/cpu logic changed -
 	//Check Diagonal 2
 	for (i = 2; i <= 6; i += 2)
 	{
-		if (TicTacToeMarks[i] == 1) // If there's CPU mark..
+		if (TicTacToeMarks[i] == O) // If there's CPU mark..
 			NumOs++;
-		else if (TicTacToeMarks[i] == 2) // If there's HUMAN mark..
+		else if (TicTacToeMarks[i] == X) // If there's HUMAN mark..
 			NumXs++;
 	}
 	if (NumXs == Xs && NumOs == Os)
@@ -304,26 +306,34 @@ bool SMyTicTacToe::CheckForPitFalls()
 void SMyTicTacToe::DrawTicTacToe() // *** player/cpu logic changed -Dan ***
 {
 
-	cout << "\nHere's where we stand puny human : \n\n";
+	cout << "\n";
+	cout << "  1| 2| 3  \n";
+	cout << " --------  \n";
+	cout << "  4| 5| 6  \n";
+	cout << " --------  \n";
+	cout << "  7| 8| 9  \n\n\n";
+	cout << " O is for the Computer Opponent.\n";
+	cout << " X is for the Human Opponent.\n\n\n";
+	cout << "\n Here's where we stand puny human : \n\n";
 
 	for (int i = 0; i <= 8; i++)
 	{
 		if ((i + 1) % 3 != 0)
 		{
-			if (TicTacToeMarks[i] == 1)
+			if (TicTacToeMarks[i] == O)
 				cout << " O|";
-			else if (TicTacToeMarks[i] == 2)
+			else if (TicTacToeMarks[i] == X)
 				cout << " X|";
-			else if (TicTacToeMarks[i] == 0)
+			else if (TicTacToeMarks[i] == E)
 				cout << "  |";
 		}
 		else
 		{
-			if (TicTacToeMarks[i] == 1)
+			if (TicTacToeMarks[i] == O)
 				cout << " O\n";
-			else if (TicTacToeMarks[i] == 2)
+			else if (TicTacToeMarks[i] == X)
 				cout << " X\n";
-			else if (TicTacToeMarks[i] == 0)
+			else if (TicTacToeMarks[i] == E)
 				cout << "  \n";
 			if ((i + 1) % 9 != 0)
 				cout << "-------- \n";
@@ -335,6 +345,7 @@ void SMyTicTacToe::TicTacToeLoop() // removed option to allow the player to choo
 {
 	while (NumberOfMovesPlayed <= 8)
 	{
+		DrawTicTacToe();
 		humanMove();  // Human plays first here..
 		if (IsFormed)
 			break;
@@ -342,9 +353,10 @@ void SMyTicTacToe::TicTacToeLoop() // removed option to allow the player to choo
 			computerMove();
 		if (IsFormed)
 			break;
+		system("cls");
 	}
 	if (!IsFormed)
-		cout << "\nNobody wins..How can i win if i don't play first ?\n";
+		cout << "\n Nobody wins..How can i win if i don't play first ?\n";
 }
 
 bool SMyTicTacToe::PlayAgain()
@@ -352,18 +364,12 @@ bool SMyTicTacToe::PlayAgain()
 	char PlayAgain = 0;
 	while (PlayAgain != 'y' && PlayAgain != 'n')
 	{
-		cout << "\nAnother try?! Pretty please!? (y|n)\n";
+		cout << "\n Another try?! Pretty please!? (y|n)\n";
 		cin >> PlayAgain;
 	}
 	cout << "\n";
-	switch (PlayAgain)
-	{
-	case 'n':
-		return false;
-	case 'y':
-		return true;
-	}
-	return false;
+
+	return PlayAgain == 'y';
 }
 
 
@@ -371,17 +377,17 @@ SMyTicTacToe *TicTacToe = new SMyTicTacToe;
 
 int main()
 {
-	cout << "Shall we play a game?\n\n";
-	cout << "I'll even let you go first!\n";
-	cout << "Select a location on the board by entering its number (1 - 9).\n";
+	cout << " Shall we play a game?\n\n";
+	cout << " I'll even let you go first!\n";
+	cout << " Select a location on the board by entering its number (1 - 9).\n";
 	cout << "  1| 2| 3  \n";
 	cout << " --------  \n";
 	cout << "  4| 5| 6  \n";
 	cout << " --------  \n";
 	cout << "  7| 8| 9  \n\n\n";
-	cout << "O is for the Computer Opponent.\n";
-	cout << "X is for the Human Opponent.\n\n\n";
-	cout << "Good luck! You're gonna need it!! :) \n";
+	cout << " O is for the Computer Opponent.\n";
+	cout << " X is for the Human Opponent.\n\n\n";
+	cout << " Good luck! You're gonna need it!! :) \n";
 
 
 	while (1)
